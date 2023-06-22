@@ -1,0 +1,38 @@
+.navbar-container {
+    height: 60px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #282c34;
+}
+
+.left{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.left h1{
+    color: aliceblue;
+    border-right: 2px solid ;
+    padding: 5px 20px 5px;
+}
+
+.left h2{
+    color: #61dafb;
+}
+
+.right{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    
+}
+
+span {
+    text-decoration: none;
+    color: #61dafb;
+
+}

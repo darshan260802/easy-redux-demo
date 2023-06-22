@@ -103,3 +103,27 @@ root.render(
 ```
 
 ### Step 5: use store wherever you want using `useSelector` & `useDispatch` from `react-redux`
+
+To Access user state
+
+```javascript
+import { useSelector } from "react-redux";
+
+const user = useSelector((state) => state.user);
+
+const { name, age } = user;
+```
+
+To use user reducers (update State)
+
+```javascript
+import { useDispatch } from "react-redux";
+import { updateName, updateAge } from "path/to/userSlice";
+
+const dispatch = useDispatch();
+
+const updateUser = () => {
+  dispatch(updateName("New Name"));
+  dispatch(updateAge(23));
+};
+```
