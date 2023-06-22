@@ -1,70 +1,105 @@
-# Getting Started with Create React App
+# Easy Redux Demo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## What is Redux ??
 
-## Available Scripts
+Redux is a state management tool/library which is used to create and manage global state that is available to all elements/components across the application without the need of prop drilling + available to routed sibling elements
 
-In the project directory, you can run:
+## How to use it in REACT
 
-### `npm start`
+### Step 1: Install Packages
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Install <code> react-redux </code> & &nbsp; <code>@reduxjs/toolkit</code> &nbsp; from npm
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```
+npm install --save @reduxjs/toolkit react-redux
+```
 
-### `npm test`
+### Step 2: Create Redux Store
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Create one js file (e.g. Store/store.js) in which we use `configureStore` function from `@reduxjs/toolkit` which takes `reducers` object and creates store
 
-### `npm run build`
+- in reducers object key will be the name of state and will accessible to anywhere with this name only , and value will be the reducer for that state
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Store/store.js
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```javascript
+import configureStore from "@reduxjs/toolkit";
+import userReducer from "./user/userSlice";
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+export default configureStore({
+  reducers: {
+    user: userReducer,
+  },
+});
+```
 
-### `npm run eject`
+### Step 3: Create State Slice
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Create one js file (e.g. Store/user/userSlice.js) in which we will create userSlice using `createSlice` from `@reduxjs/toolkit`. slice in nothing but combination of reducer & actions to simplify state management
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- `createSlice` will take one object as argument which will have
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1. `name` - name of slice
+2. `initialState` - initial state ( like in useState )
+3. `reducers` - object in which key will be name of action & will be available with same name. and value will be fuction that takes `current state` & `action` as arguments and returns `upated state`
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- `action` will have 2 things
 
-## Learn More
+1. `type`: type of action you have called.
+2. `payload` : data that you have passed in action call
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Store/user/userSlice.js
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```javascript
+import createSlice from "@reduxjs/toolkit";
 
-### Code Splitting
+const userSlice = createSlice({
+  name: "user",
+  initialState: {
+    name: "Darshan Patel",
+    age: 21,
+  },
+  reducers: {
+    updateName: (state, action) => {
+      const { type, payload } = action;
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+      return { ...state, name: payload };
+    },
+    updateAge: (state, { payload }) => {
+      return { ...state, age: payload };
+    },
+  },
+});
 
-### Analyzing the Bundle Size
+export default userSlice.reducer;
+export const { updateName, updateAge } = userSlice.actions;
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```
+Note: we will export slice.reducer as default so it acn be directly user in configureStore & will export all reducers from slice.actions to use them in any components using dispatch
+```
 
-### Making a Progressive Web App
+### Step 4: Provide store at root level (i.e index.js)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+will provide store in root level using `Provider` from 'react-redux' so it will availbale across app
 
-### Advanced Configuration
+index.js
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```javascript
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import store from "./Store/store";
+import { Provider } from "react-redux";
 
-### Deployment
+const root = ReactDOM.createRoot(document.getElementById("root"));
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+root.render(
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
+```
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Step 5: use store wherever you want using `useSelector` & `useDispatch` from `react-redux`
